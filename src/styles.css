@@ -1,1 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
+*, *::before, *::after {
+ box-sizing: border-box; /* padding et bordure dans la largeur */
+}
+
+:root {
+ --color-primary: #0b2a5b;
+ --color-danger: #b91c1c;
+ --color-surface: #ffffff;
+ --space-3: 1rem;
+ --radius: 10px;
+}
+
+button, input, select {
+  font: inherit;
+}

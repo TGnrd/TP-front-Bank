@@ -1,0 +1,63 @@
+<section class="counter">
+    <header class="toolbar">
+        <h1>Guichet</h1>
+        <button type="button">Masquer les montants</button>
+    </header>
+    <label class="field">
+        <span>Rechercher</span>
+        <input type="search" placeholder="Titulaire ou IBAN" />
+    </label>
+    <ul class="cards">
+        @for (account of visible(); track account.id) {
+        <li>
+            <button type="button" class="card" [class.overdrawn]="account.balance < 0">
+                <span class="holder">{{ account.customerFirstName }} {{ account.customerLastName }}</span>
+                <span class="iban">{{ account.iban }}</span>
+                <span class="balance">{{ account.balance | currency: 'EUR' }}</span>
+            </button>
+        </li>
+        } @empty {
+        <li class="message">Aucun compte.</li>
+        }
+    </ul>
+
+    <aside class="detail" aria-label="Détail du compte">…</aside>
+    <ul> <!-- liste sans ordre -->
+        <li>Compte courant</li>
+        <li>Livret</li>
+    </ul>
+    <table> <!-- données en lignes et colonnes -->
+        <tr>
+            <th>Date</th>
+            <th>Montant</th>
+        </tr>
+        <tr>
+            <td>12/11/2026</td>
+            <td>50,00 €</td>
+        </tr>
+    </table>
+
+    <dl class="figures">
+        <div>
+            <dt>Solde</dt>
+            <dd>1 500,00 €</dd>
+        </div>
+        <div>
+            <dt>Découvert autorisé</dt>
+            <dd>300,00 €</dd>
+        </div>
+    </dl>
+
+
+
+    <label for="iban">IBAN</label>
+    <input id="iban" type="text" />
+    <!-- forme du guichet, le label entoure le champ -->
+    <label>
+        <span>Trier par</span>
+        <select>
+            <option value="name">Titulaire</option>
+            <option value="balance">Solde décroissant</option>
+        </select>
+    </label>
+</section>

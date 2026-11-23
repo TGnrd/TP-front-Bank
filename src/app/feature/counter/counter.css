@@ -1,0 +1,47 @@
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.toolbar button {
+  margin-left: auto;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+}
+
+.card {
+  padding: var(--space-3);
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  margin: 0;
+}
+
+.card.overdrawn {
+  color: var(--color-danger);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: var(--space-3);
+}
+
+
+@media (max-width: 800px) {
+  .layout.with-detail {
+    grid-template-columns: 1fr;
+  }
+  .detail {
+    position: static;
+  }
+}

@@ -1,59 +1,106 @@
 # BanqueFront
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.3.0.
+Front Angular du TP « Banque Hexa en ligne » — guichet des conseillers, branché sur l'API Banking.
 
-## Development server
+## Prérequis
 
-To start a local development server, run:
+- Node.js et npm
+- .NET SDK (pour l'API)
+- Docker (pour la base PostgreSQL)
+
+## Lancer l'application
+
+L'ordre compte : **l'API d'abord, le front ensuite**.
+
+### 1. Lancer l'API
+
+Depuis le dossier de la correction du backend :
 
 ```bash
+docker compose up -d
+dotnet run --project Banking.Api --launch-profile https
+```
+
+L'API écoute sur `https://localhost:7180`, sa documentation sur
+`https://localhost:7180/swagger`.
+
+### 2. Lancer le front
+
+Depuis ce dossier :
+
+```bash
+npm install
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Ouvrir ensuite `http://localhost:4200/`. L'application se recharge
+automatiquement à chaque modification des fichiers source.
 
-## Code scaffolding
+## Comment le front joint l'API
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Le front n'appelle jamais `https://localhost:7180` directement : toutes ses
+requêtes sont relatives (`/api/...`). Le serveur de développement les relaie
+grâce au proxy déclaré dans `proxy.conf.json` :
 
-```bash
-ng generate component component-name
+```json
+{
+  "/api": {
+    "target": "https://localhost:7180",
+    "secure": false,
+    "changeOrigin": true
+  }
+}
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Ce fichier est branché sur la cible `serve` de `angular.json` :
 
-```bash
-ng generate --help
+```json
+"options": { "proxyConfig": "proxy.conf.json" }
 ```
 
-## Building
+Le proxy est nécessaire, pas cosmétique : il place le front et l'API sur une
+même origine, ce qui évite le CORS et laisse passer le cookie de session.
 
-To build the project run:
+Pour vérifier que tout passe bien par le proxy : `F12` → **Network** → filtrer
+`api`. Les requêtes doivent viser `localhost:4200/api/...` et jamais
+`localhost:7180`. Si l'API est arrêtée, l'écran affiche un message d'erreur au
+lieu d'une page blanche.
 
-```bash
-ng build
+## Structure du projet
+
+```
+src/app/
+├── core/                  # aucune dépendance vers les features
+│   ├── models.ts          # interfaces du contrat de l'API
+│   ├── bank-api.ts        # seul fichier qui connaît les URL de l'API
+│   ├── account-utils.ts   # fonctions pures : nom, IBAN, tri, total
+│   └── problem.ts         # messages d'erreur ProblemDetails
+├── feature/counter/       # l'écran du guichet
+│   ├── counter.ts         # état et calculs
+│   ├── counter.html       # structure affichée
+│   └── counter.css        # mise en forme
+└── app.config.ts          # provideHttpClient(), router
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Tests
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Le projet utilise Vitest, via le testeur intégré à la CLI Angular :
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+## Build
 
 ```bash
-ng e2e
+ng build
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Les artefacts sont produits dans `dist/`. La configuration `production` est
+utilisée par défaut (optimisation, budgets, hash des noms de fichiers).
 
-## Additional Resources
+## Ressources
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [Angular](https://angular.dev) — documentation officielle
+- [httpResource](https://angular.dev/guide/http/http-resource) — lecture de données HTTP
+- [Contrat de l'API Banking](../contrat-api.pdf) — routes, modèles et erreurs
