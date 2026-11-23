@@ -1,63 +1,68 @@
 <section class="counter">
-    <header class="toolbar">
+  <header class="hero">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">BH</span>
+      <div class="titles">
+        <p class="eyebrow">Banque Hexa</p>
         <h1>Guichet</h1>
-        <button type="button">Masquer les montants</button>
-    </header>
+        <p class="subtitle">Tous les comptes de la banque.</p>
+      </div>
+    </div>
+
+    <button type="button" class="ghost">
+      <span class="dot" aria-hidden="true"></span>
+      Masquer les montants
+    </button>
+  </header>
+
+  <div class="controls">
     <label class="field">
-        <span>Rechercher</span>
-        <input type="search" placeholder="Titulaire ou IBAN" />
+      <span>Rechercher</span>
+      <input type="search" placeholder="Titulaire ou IBAN" />
     </label>
-    <ul class="cards">
-        @for (account of visible(); track account.id) {
-        <li>
-            <button type="button" class="card" [class.overdrawn]="account.balance < 0">
-                <span class="holder">{{ account.customerFirstName }} {{ account.customerLastName }}</span>
-                <span class="iban">{{ account.iban }}</span>
-                <span class="balance">{{ account.balance | currency: 'EUR' }}</span>
-            </button>
-        </li>
-        } @empty {
-        <li class="message">Aucun compte.</li>
-        }
-    </ul>
 
-    <aside class="detail" aria-label="Détail du compte">…</aside>
-    <ul> <!-- liste sans ordre -->
-        <li>Compte courant</li>
-        <li>Livret</li>
-    </ul>
-    <table> <!-- données en lignes et colonnes -->
-        <tr>
-            <th>Date</th>
-            <th>Montant</th>
-        </tr>
-        <tr>
-            <td>12/11/2026</td>
-            <td>50,00 €</td>
-        </tr>
-    </table>
-
-    <dl class="figures">
-        <div>
-            <dt>Solde</dt>
-            <dd>1 500,00 €</dd>
-        </div>
-        <div>
-            <dt>Découvert autorisé</dt>
-            <dd>300,00 €</dd>
-        </div>
-    </dl>
-
-
-
-    <label for="iban">IBAN</label>
-    <input id="iban" type="text" />
-    <!-- forme du guichet, le label entoure le champ -->
-    <label>
-        <span>Trier par</span>
-        <select>
-            <option value="name">Titulaire</option>
-            <option value="balance">Solde décroissant</option>
-        </select>
+    <label class="field">
+      <span>Trier par</span>
+      <select>
+        <option value="name">Titulaire</option>
+        <option value="balance">Solde décroissant</option>
+      </select>
     </label>
+  </div>
+
+  @if (errorMessage()) {
+  <p class="message" role="alert">{{ errorMessage() }}</p>
+  } @else if (accounts.isLoading()) {
+  <p class="message">Chargement…</p>
+  } @else {
+  <ul class="cards">
+    @for (account of visible(); track account.id) {
+    <li>
+      <button type="button" class="card" [class.overdrawn]="isOverdrawn(account)">
+        <span class="card-head">
+          <span class="avatar" aria-hidden="true" [attr.data-tone]="account.id % 4"
+            [attr.data-initial]="account.customerFirstName.charAt(0)"></span>
+          <span class="identity">
+            <span class="holder">{{ holderName(account) }}</span>
+            <span class="iban">{{ formatIban(account.iban) }}</span>
+          </span>
+        </span>
+
+        <div class="amounts">
+          <span class="balance">{{ account.balance | currency:'EUR' }}</span>
+          @if (isOverdrawn(account)) {
+          <span class="overdrafted">À découvert</span>
+          }
+
+          @if (account.overdraftLimit === 0) {
+          <span class="no-overdraft">Découvert non autorisé</span>
+          } @else {
+          <span class="overdraft">Découvert autorisé : {{ account.overdraftLimit | currency:'EUR' }}</span>
+          }
+        </div>
+      </button>
+    </li>
+    }
+  </ul>
+  }
 </section>
