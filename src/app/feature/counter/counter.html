@@ -8,6 +8,16 @@
         <p class="subtitle">Tous les comptes de la banque.</p>
       </div>
     </div>
+    <div class="summary" aria-live="polite">
+      <span class="summary-item">
+        <span class="summary-label">Comptes affichés</span>
+        <strong class="summary-value">{{ visible().length }}</strong>
+      </span>
+      <span class="summary-item">
+        <span class="summary-label">Total des soldes</span>
+        <strong class="summary-value">{{ total() | currency:'EUR' }}</strong>
+      </span>
+    </div>
 
     <button type="button" class="ghost">
       <span class="dot" aria-hidden="true"></span>
@@ -18,12 +28,13 @@
   <div class="controls">
     <label class="field">
       <span>Rechercher</span>
-      <input type="search" placeholder="Titulaire ou IBAN" />
+      <input type="search" placeholder="Titulaire ou IBAN" [(ngModel)]="search" />
+
     </label>
 
     <label class="field">
       <span>Trier par</span>
-      <select>
+      <select [(ngModel)]="sort">
         <option value="name">Titulaire</option>
         <option value="balance">Solde décroissant</option>
       </select>
@@ -62,6 +73,9 @@
         </div>
       </button>
     </li>
+    }
+    @empty {
+    <li class="message">Aucun compte ne correspond à « {{ search() }} ».</li>
     }
   </ul>
   }

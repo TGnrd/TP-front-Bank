@@ -32,3 +32,13 @@ export function formatIban(iban: string): string {
     .replace(/(.{4})/g, '$1 ')
     .trim();
 }
+
+export function matchesSearch(account: Account, term: string): boolean {
+ const search = term.trim().toLowerCase();
+ if (search === "") {
+ return true; // recherche vide, tout passe
+ }
+ const name = holderName(account).toLowerCase();
+ const iban = account.iban.toLowerCase();
+ return name.includes(search) || iban.includes(search.replace(/\s+/g, ""));
+}

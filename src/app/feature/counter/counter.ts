@@ -1,12 +1,13 @@
 import { BankApi } from "../../core/bank-api";
-import { sortAccounts, totalBalance, holderName, formatIban, isOverdrawn } from "../../core/account-utils";
-import { Component, inject, computed } from '@angular/core';
+import { sortAccounts, totalBalance, holderName, formatIban, isOverdrawn, AccountSort, matchesSearch } from "../../core/account-utils";
+import { Component, inject, computed, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { asProblem } from '../../core/problem';
+import { FormsModule } from "@angular/forms";
 
 @Component({
   selector: "app-counter",
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, FormsModule],
   templateUrl: "./counter.html",
   styleUrl: "./counter.css",
 })
@@ -14,10 +15,18 @@ import { asProblem } from '../../core/problem';
 export class Counter {
   private readonly api = inject(BankApi);
   readonly accounts = this.api.accounts();
-  readonly visible = computed(() => this.accounts.value()?.items ?? []);
   readonly holderName = holderName;
   readonly formatIban = formatIban;
   readonly isOverdrawn = isOverdrawn;
+  readonly total = computed(() => totalBalance(this.visible()));
+  readonly search = signal('');
+  readonly sort = signal<AccountSort>('name');
+
+  readonly visible = computed(() => {
+    const all = this.accounts.value()?.items ?? [];
+    const found = all.filter((a) => matchesSearch(a, this.search()));
+    return sortAccounts(found, this.sort());
+  });
 
   readonly errorMessage = computed(() => {
     const error = this.accounts.error();
