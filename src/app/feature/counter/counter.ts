@@ -21,6 +21,7 @@ export class Counter {
   readonly total = computed(() => totalBalance(this.visible()));
   readonly search = signal('');
   readonly sort = signal<AccountSort>('name');
+  readonly masked = signal(false);
 
   readonly visible = computed(() => {
     const all = this.accounts.value()?.items ?? [];
@@ -43,6 +44,10 @@ export class Counter {
 
   closeDetail(): void {
     this.selectedId.set(null);
+  }
+
+   toggleMasked(): void {                  // ← la méthode ici
+    this.masked.update((value) => !value);
   }
 
   readonly errorMessage = computed(() => {

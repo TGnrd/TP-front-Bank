@@ -11,8 +11,13 @@
   grid-template-areas:
     "hero"
     "controls"
-    "cards";
+    "cards"
+    "detail";
   gap: var(--space-4);
+}
+
+.counter > * {
+  min-width: 0;
 }
 
 .counter > .hero {
@@ -31,13 +36,15 @@
   grid-area: detail;
 }
 
-/* Dès qu'un détail est ouvert, une seconde colonne l'accueille à droite. */
-.counter:has(.detail) {
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
-  grid-template-areas:
-    "hero hero"
-    "controls controls"
-    "cards detail";
+@media (min-width: 801px) {
+  /* Dès qu'un détail est ouvert, une seconde colonne l'accueille à droite. */
+  .counter:has(.detail) {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+    grid-template-areas:
+      "hero hero"
+      "controls controls"
+      "cards detail";
+  }
 }
 
 /* ============ En-tête ============ */
@@ -218,6 +225,7 @@
   display: grid;
   gap: var(--space-3);
   align-self: start;
+  min-width: 0;
   padding: var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -374,11 +382,17 @@
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(272px, 100%), 1fr));
+  align-content: start;
+  align-self: start;
   gap: var(--space-3);
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.cards > li {
+  min-width: 0;
 }
 
 .card {
@@ -565,18 +579,6 @@
   }
 }
 
-@media (max-width: 800px) {
-  /* Sous 800 px, le détail passe sous la liste (critère 375 px). */
-  .counter:has(.detail) {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "hero"
-      "controls"
-      "cards"
-      "detail";
-  }
-}
-
 @media (max-width: 560px) {
   .mark {
     width: 44px;
@@ -586,10 +588,6 @@
   .ghost {
     width: 100%;
     justify-content: center;
-  }
-
-  .cards {
-    grid-template-columns: 1fr;
   }
 
   .balance {

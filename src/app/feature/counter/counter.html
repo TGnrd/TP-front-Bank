@@ -15,13 +15,18 @@
       </span>
       <span class="summary-item">
         <span class="summary-label">Total des soldes</span>
-        <strong class="summary-value">{{ total() | currency:'EUR' }}</strong>
+        <span class="summary-value">
+          @if (masked()) {
+          •••• €
+          } @else {
+          {{ total() | currency:'EUR' }}
+          }
+        </span>
       </span>
     </div>
 
-    <button type="button" class="ghost">
-      <span class="dot" aria-hidden="true"></span>
-      Masquer les montants
+    <button type="button" class="ghost" (click)="toggleMasked()">
+      {{ masked() ? "Afficher les montants" : "Masquer les montants" }}
     </button>
   </header>
 
@@ -60,7 +65,13 @@
         </span>
 
         <div class="amounts">
-          <span class="balance">{{ account.balance | currency:'EUR' }}</span>
+          <span class="balance">
+            @if (masked()) {
+            •••• €
+            } @else {
+            {{ account.balance | currency: "EUR" }}
+            }
+          </span>
           @if (isOverdrawn(account)) {
           <span class="overdrafted">À découvert</span>
           }
@@ -86,11 +97,28 @@
     <p>{{ formatIban(account.iban) }}</p>
     <dl>
       <dt>Solde</dt>
-      <dd>{{ account.balance | currency:'EUR' }}</dd>
+      <span class="summary-value">
+        @if (masked()) {
+        •••• €
+        } @else {
+        {{ account.balance | currency:'EUR' }}
+        }
+      </span>
       <dt>Découvert autorisé</dt>
-      <dd>{{ account.overdraftLimit | currency:'EUR' }}</dd>
+      <span class="summary-value">
+        @if (masked()) {
+        •••• €
+        } @else {
+        {{ account.overdraftLimit | currency:'EUR' }}
+        }
+      </span>
       <dt>Montant disponible</dt>
-      <dd>{{ availableBalance(account) | currency:'EUR' }}</dd>
+      <span class="summary-value">
+        @if (masked()) {
+        •••• €
+        } @else {
+        {{ availableBalance(account) | currency:'EUR' }} }
+      </span>
     </dl>
 
     @if (operations.isLoading()) {
@@ -118,7 +146,13 @@
           @case ('TransferIn') { + }
           @case ('TransferOut') { - }
           }
-          {{ op.amount | currency:'EUR' }}
+          <span class="summary-value">
+            @if (masked()) {
+            •••• €
+            } @else {
+            {{ op.amount | currency:'EUR' }} 
+          }
+          </span>
         </span>
 
       </li>
