@@ -7,7 +7,37 @@
 
 .counter {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "hero"
+    "controls"
+    "cards";
   gap: var(--space-4);
+}
+
+.counter > .hero {
+  grid-area: hero;
+}
+
+.counter > .controls {
+  grid-area: controls;
+}
+
+.counter > .cards {
+  grid-area: cards;
+}
+
+.counter > .detail {
+  grid-area: detail;
+}
+
+/* Dès qu'un détail est ouvert, une seconde colonne l'accueille à droite. */
+.counter:has(.detail) {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+  grid-template-areas:
+    "hero hero"
+    "controls controls"
+    "cards detail";
 }
 
 /* ============ En-tête ============ */
@@ -179,6 +209,130 @@
   font-weight: 680;
   font-variant-numeric: tabular-nums;
   color: var(--color-primary);
+}
+
+/* ============ Panneau de détail ============ */
+
+.detail {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  align-self: start;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.detail > button {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: #f8fafc;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  line-height: 1;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.detail > button:hover {
+  border-color: #fecaca;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.detail h2 {
+  padding-right: 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 680;
+  letter-spacing: -0.01em;
+}
+
+.detail > p:first-of-type {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace;
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  overflow-wrap: anywhere;
+}
+
+.detail dl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  background: #f8fafc;
+}
+
+.detail dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.detail dd {
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--color-primary);
+}
+
+.operations {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.operation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 var(--space-3);
+  padding: 0.65rem 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.operation:last-child {
+  border-bottom: none;
+}
+
+.op-label {
+  grid-column: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.op-date {
+  grid-column: 1;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.op-amount {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--color-primary);
+}
+
+.operations > li:not(.operation) {
+  color: var(--color-muted);
+  font-size: 0.85rem;
 }
 
 .field>span {
@@ -408,6 +562,18 @@
   .controls {
     position: static;
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 800px) {
+  /* Sous 800 px, le détail passe sous la liste (critère 375 px). */
+  .counter:has(.detail) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "hero"
+      "controls"
+      "cards"
+      "detail";
   }
 }
 

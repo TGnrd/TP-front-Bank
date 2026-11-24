@@ -49,7 +49,7 @@
   <ul class="cards">
     @for (account of visible(); track account.id) {
     <li>
-      <button type="button" class="card" [class.overdrawn]="isOverdrawn(account)">
+      <button type="button" class="card" [class.overdrawn]="isOverdrawn(account)" (click)="select(account.id)">
         <span class="card-head">
           <span class="avatar" aria-hidden="true" [attr.data-tone]="account.id % 4"
             [attr.data-initial]="account.customerFirstName.charAt(0)"></span>
@@ -79,4 +79,55 @@
     }
   </ul>
   }
+  @if (selectedAccount(); as account) {
+  <aside class="detail" aria-label="Détail du compte">
+    <button type="button" (click)="closeDetail()" aria-label="Fermer le détail">✕</button>
+    <h2>{{ holderName(account) }}</h2>
+    <p>{{ formatIban(account.iban) }}</p>
+    <dl>
+      <dt>Solde</dt>
+      <dd>{{ account.balance | currency:'EUR' }}</dd>
+      <dt>Découvert autorisé</dt>
+      <dd>{{ account.overdraftLimit | currency:'EUR' }}</dd>
+      <dt>Montant disponible</dt>
+      <dd>{{ availableBalance(account) | currency:'EUR' }}</dd>
+    </dl>
+
+    @if (operations.isLoading()) {
+    <p>Chargement…</p>
+    } @else {
+    <ul class="operations">
+      @for (op of operations.value()?.items ?? []; track op.id) {
+      <li class="operation">
+
+        <span class="op-label">
+          @switch (op.kind) {
+          @case ('Deposit') { Dépôt }
+          @case ('Withdrawal') { Retrait }
+          @case ('TransferIn') { Virement reçu }
+          @case ('TransferOut') { Virement émis }
+          }
+        </span>
+
+        <time class="op-date">{{ op.createdAt | date:'dd/MM/yyyy HH:mm' }}</time>
+
+        <span class="op-amount">
+          @switch (op.kind) {
+          @case ('Deposit') { + }
+          @case ('Withdrawal') { - }
+          @case ('TransferIn') { + }
+          @case ('TransferOut') { - }
+          }
+          {{ op.amount | currency:'EUR' }}
+        </span>
+
+      </li>
+      } @empty {
+      <li>Aucune opération sur ce compte.</li>
+      }
+    </ul>
+    }
+  </aside>
+  }
+
 </section>

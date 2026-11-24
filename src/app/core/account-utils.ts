@@ -1,4 +1,4 @@
-import { Account, Operation } from "./models";
+import { Account } from "./models";
 
 export function totalBalance(accounts: Account[]): number {
   return accounts.reduce((sum, account) => sum + account.balance, 0);
@@ -41,4 +41,14 @@ export function matchesSearch(account: Account, term: string): boolean {
  const name = holderName(account).toLowerCase();
  const iban = account.iban.toLowerCase();
  return name.includes(search) || iban.includes(search.replace(/\s+/g, ""));
+}
+
+export type OperationKind = "Deposit" | "Withdrawal" | "TransferIn" | "TransferOut";
+export interface Operation {
+ id: number;
+ kind: OperationKind;
+ amount: number; // toujours positif
+ balanceAfter: number;
+ counterpartAccountId: number | null; // null hors virement
+ createdAt: string; // date ISO 8601, en UTC
 }

@@ -1,13 +1,13 @@
 import { BankApi } from "../../core/bank-api";
-import { sortAccounts, totalBalance, holderName, formatIban, isOverdrawn, AccountSort, matchesSearch } from "../../core/account-utils";
-import { Component, inject, computed, signal } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
+import {sortAccounts, totalBalance, holderName, formatIban, isOverdrawn,availableBalance, AccountSort, matchesSearch
+} from "../../core/account-utils";import { Component, inject, computed, signal } from '@angular/core';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { asProblem } from '../../core/problem';
 import { FormsModule } from "@angular/forms";
 
 @Component({
   selector: "app-counter",
-  imports: [CurrencyPipe, FormsModule],
+  imports: [CurrencyPipe, FormsModule, DatePipe],
   templateUrl: "./counter.html",
   styleUrl: "./counter.css",
 })
@@ -27,6 +27,23 @@ export class Counter {
     const found = all.filter((a) => matchesSearch(a, this.search()));
     return sortAccounts(found, this.sort());
   });
+  readonly selectedId = signal<number | null>(null);
+  readonly operations = this.api.lastOperations(this.selectedId);
+
+   readonly availableBalance = availableBalance;
+
+  readonly selectedAccount = computed(() => {
+    const all = this.accounts.value()?.items ?? [];
+    return all.find((a) => a.id === this.selectedId()) ?? null;
+  });
+
+  select(id: number): void {
+    this.selectedId.update((current) => (current === id ? null : id));
+  }
+
+  closeDetail(): void {
+    this.selectedId.set(null);
+  }
 
   readonly errorMessage = computed(() => {
     const error = this.accounts.error();
