@@ -1,0 +1,90 @@
+<section class="counter">
+  <header class="hero">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">BH</span>
+      <div class="titles">
+        <p class="eyebrow">Banque Hexa</p>
+        <h1>Guichet</h1>
+        <p class="subtitle">Tous les comptes de la banque.</p>
+      </div>
+    </div>
+
+    <div class="summary" aria-live="polite">
+      <span class="summary-item">
+        <span class="summary-label">Comptes affichés</span>
+        <strong class="summary-value">{{ visible().length }}</strong>
+      </span>
+      <span class="summary-item">
+        <span class="summary-label">Total des soldes</span>
+        <app-amount class="summary-value" [value]="total()" />
+      </span>
+    </div>
+  </header>
+
+  <div class="controls">
+    <label class="field">
+      <span>Rechercher</span>
+      <input type="search" placeholder="Titulaire ou IBAN" [(ngModel)]="search" />
+    </label>
+
+    <label class="field">
+      <span>Trier par</span>
+      <select [(ngModel)]="sort">
+        <option value="name">Titulaire</option>
+        <option value="balance">Solde décroissant</option>
+      </select>
+    </label>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="message" role="alert">{{ errorMessage() }}</p>
+  } @else if (accounts.isLoading()) {
+    <p class="message">Chargement…</p>
+  } @else {
+    <ul class="cards">
+      @for (account of visible(); track account.id) {
+        <li>
+          <app-account-card
+            [account]="account"
+            [selected]="account.id === selectedId()"
+            (choose)="select($event)" />
+        </li>
+      } @empty {
+        <li class="message">Aucun compte ne correspond à « {{ search() }} ».</li>
+      }
+    </ul>
+  }
+
+  @if (selectedAccount(); as account) {
+    <aside class="detail" aria-label="Détail du compte">
+      <app-card [title]="holderName(account)">
+        <button type="button" class="close" (click)="closeDetail()" aria-label="Fermer le détail">
+          ✕
+        </button>
+        <p class="iban">{{ account.iban | iban }}</p>
+
+        <dl class="figures">
+          <div>
+            <dt>Solde</dt>
+            <dd><app-amount [value]="account.balance" /></dd>
+          </div>
+          <div>
+            <dt>Découvert autorisé</dt>
+            <dd><app-amount [value]="account.overdraftLimit" /></dd>
+          </div>
+          <div>
+            <dt>Montant disponible</dt>
+            <dd><app-amount [value]="availableBalance(account)" /></dd>
+          </div>
+        </dl>
+
+        <h3>Dernières opérations</h3>
+        @if (operations.isLoading()) {
+          <p class="message">Chargement…</p>
+        } @else {
+          <app-operation-list [operations]="operations.value()?.items ?? []" />
+        }
+      </app-card>
+    </aside>
+  }
+</section>

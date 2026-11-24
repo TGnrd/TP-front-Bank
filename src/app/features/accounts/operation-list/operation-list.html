@@ -1,0 +1,18 @@
+<ul class="operations">
+  @for (op of operations(); track op.id) {
+    <li class="operation">
+      <span class="op-label">
+        @switch (op.kind) {
+          @case ('Deposit') { Dépôt }
+          @case ('Withdrawal') { Retrait }
+          @case ('TransferIn') { Virement reçu }
+          @case ('TransferOut') { Virement émis }
+        }
+      </span>
+      <time class="op-date">{{ op.createdAt | date: 'dd/MM/yyyy HH:mm' }}</time>
+      <app-amount class="op-amount" [value]="signedAmount(op)" />
+    </li>
+  } @empty {
+    <li>Aucune opération sur ce compte.</li>
+  }
+</ul>

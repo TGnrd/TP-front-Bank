@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
-import { Counter } from './feature/counter/counter';
+import { Component, inject } from '@angular/core';
+import { Counter } from './features/counter/counter';
+import { AccountStore } from './core/account-store';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +9,5 @@ import { Counter } from './feature/counter/counter';
   styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('banque-front');
+  protected readonly store = inject(AccountStore);
 }

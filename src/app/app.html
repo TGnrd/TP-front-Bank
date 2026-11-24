@@ -1,1 +1,9 @@
+<header class="app-header">
+  <span class="brand"><span class="logo" aria-hidden="true">◆</span> Banque Hexa</span>
+  <span class="tagline">Espace conseiller</span>
+  <button type="button" class="mask-toggle" (click)="store.toggleBalances()">
+    {{ store.balancesHidden() ? "Afficher les montants" : "Masquer les montants" }}
+  </button>
+</header>
+
 <app-counter />

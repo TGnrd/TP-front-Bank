@@ -1,13 +1,17 @@
 import { BankApi } from "../../core/bank-api";
-import {sortAccounts, totalBalance, holderName, formatIban, isOverdrawn,availableBalance, AccountSort, matchesSearch
-} from "../../core/account-utils";import { Component, inject, computed, signal } from '@angular/core';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { sortAccounts, totalBalance, holderName, availableBalance, AccountSort, matchesSearch} from "../../core/account-utils"; 
+import { Component, inject, computed, signal } from '@angular/core';
 import { asProblem } from '../../core/problem';
 import { FormsModule } from "@angular/forms";
+import { AccountCard } from '../accounts/account-card/account-card';
+import { Amount } from "../../shared/amount/masked";
+import { IbanPipe } from "../../shared/iban-pipe";
+import { Card } from "../../shared/card/card";
+import { OperationList } from "../accounts/operation-list/operation-list";
 
 @Component({
   selector: "app-counter",
-  imports: [CurrencyPipe, FormsModule, DatePipe],
+  imports: [FormsModule, AccountCard, OperationList, Amount, IbanPipe, Card],
   templateUrl: "./counter.html",
   styleUrl: "./counter.css",
 })
@@ -16,12 +20,9 @@ export class Counter {
   private readonly api = inject(BankApi);
   readonly accounts = this.api.accounts();
   readonly holderName = holderName;
-  readonly formatIban = formatIban;
-  readonly isOverdrawn = isOverdrawn;
   readonly total = computed(() => totalBalance(this.visible()));
   readonly search = signal('');
   readonly sort = signal<AccountSort>('name');
-  readonly masked = signal(false);
 
   readonly visible = computed(() => {
     const all = this.accounts.value()?.items ?? [];
@@ -31,7 +32,7 @@ export class Counter {
   readonly selectedId = signal<number | null>(null);
   readonly operations = this.api.lastOperations(this.selectedId);
 
-   readonly availableBalance = availableBalance;
+  readonly availableBalance = availableBalance;
 
   readonly selectedAccount = computed(() => {
     const all = this.accounts.value()?.items ?? [];
@@ -44,10 +45,6 @@ export class Counter {
 
   closeDetail(): void {
     this.selectedId.set(null);
-  }
-
-   toggleMasked(): void {                  // ← la méthode ici
-    this.masked.update((value) => !value);
   }
 
   readonly errorMessage = computed(() => {

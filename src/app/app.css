@@ -1,0 +1,57 @@
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+}
+
+.app-header .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.app-header .logo {
+  color: var(--color-accent);
+}
+
+.app-header .tagline {
+  margin-right: auto;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.mask-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: #f8fafc;
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.mask-toggle:hover {
+  border-color: var(--color-accent);
+  background: #eef2ff;
+}
+
+.mask-toggle:active {
+  transform: scale(0.97);
+}
+
+@media (max-width: 560px) {
+  .mask-toggle {
+    width: 100%;
+  }
+}

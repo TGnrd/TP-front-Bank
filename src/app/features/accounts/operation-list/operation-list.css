@@ -1,0 +1,51 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.operations {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.operation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 var(--space-3);
+  padding: 0.65rem 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.operation:last-child {
+  border-bottom: none;
+}
+
+.op-label {
+  grid-column: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.op-date {
+  grid-column: 1;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.op-amount {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--color-primary);
+}
+
+.operations > li:not(.operation) {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}

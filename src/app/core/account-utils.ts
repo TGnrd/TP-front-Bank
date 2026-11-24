@@ -52,3 +52,9 @@ export interface Operation {
  counterpartAccountId: number | null; // null hors virement
  createdAt: string; // date ISO 8601, en UTC
 }
+
+export function signedAmount(operation: Operation): number {
+  return operation.kind === 'Withdrawal' || operation.kind === 'TransferOut'
+    ? -operation.amount
+    : operation.amount;
+}
